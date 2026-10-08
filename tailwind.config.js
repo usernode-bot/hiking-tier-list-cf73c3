@@ -45,23 +45,34 @@ module.exports = {
     extend: {
       colors: {
         ground: token('ground'), // the page
-        surface: token('surface'), // lists, cards, fields
-        raised: token('raised'), // hovers, badges
+        surface: token('surface'), // bands, lists, sheets, fields
+        raised: token('raised'), // switch track, tiles, bar tracks
         fg: token('fg'), // text
-        muted: token('muted'), // secondary text
+        muted: token('muted'), // notes, counts, labels
         line: token('line'), // borders, dividers, skeletons
-        accent: token('accent'), // the one accent: the primary action
+        accent: token('accent'), // forest green: the primary action
         'on-accent': token('on-accent'), // text on the accent
         danger: token('danger'),
         'on-danger': token('on-danger'),
         focus: token('focus'), // the keyboard focus ring
+        'tier-s': token('tier-s'), // S, trail-blaze red
+        'tier-a': token('tier-a'), // A, amber
+        'tier-b': token('tier-b'), // B, goldenrod
+        'tier-c': token('tier-c'), // C, moss green
+        'tier-d': token('tier-d'), // D, lake blue
+        'on-tier': token('on-tier'), // the letter on a tier colour
+      },
+      fontFamily: {
+        // Trail-sign lettering for the title, tier letters and hike names
+        // in sheets; everything else uses the system face.
+        round: ['ui-rounded', '"SF Pro Rounded"', 'system-ui', 'sans-serif'],
       },
       // The type scale: four sizes, and nothing in between.
       fontSize: {
         small: ['0.875rem', { lineHeight: '1.25rem' }],
         body: ['1rem', { lineHeight: '1.5rem' }],
-        heading: ['1.25rem', { lineHeight: '1.75rem', fontWeight: '600' }],
-        title: ['1.75rem', { lineHeight: '2.25rem', fontWeight: '700' }],
+        heading: ['1.125rem', { lineHeight: '1.5rem', fontWeight: '600' }],
+        title: ['1.5rem', { lineHeight: '2rem', fontWeight: '700' }],
       },
     },
   },
