@@ -3,5 +3,21 @@
   "icon": {
     "emoji": "🥾"
   },
-  "secrets": []
+  "secrets": [],
+  "tests": [
+    {
+      "id": "tierlist.everyone-demo",
+      "name": "Group tier list shows demo hikes",
+      "path": "/?demo=1",
+      "expectText": "Granite Notch Summit",
+      "visual": true,
+      "impact": ["public/**", "styles/**", "tailwind.config.js", "server.js", "lib/**"]
+    },
+    {
+      "id": "tierlist.plain-load",
+      "name": "Tier list loads without demo data",
+      "path": "/",
+      "expectSelector": "main[data-loaded]"
+    }
+  ]
 }

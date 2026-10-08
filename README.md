@@ -1,27 +1,37 @@
 # Hiking Tier List
 
-> **Starter template** — this repo was scaffolded by Homeroom Social
-> Vibecoding. Everything in it is placeholder example code until the
-> app's first real feature is built.
+A shared tier list for a group's hikes. Anyone adds a hike (name plus an
+optional note), each person sorts the hikes into S / A / B / C / D tiers,
+and the **Everyone** view shows where the group landed: each hike sits in
+the tier most people picked, with a tie going to the higher tier.
 
-The scaffold is a small working demo that proves the plumbing works:
+## How it works
 
-- **Sign-in** — the server verifies the platform-issued user token
-  (an RS256 JWT) on every request, so the app already knows who is
-  using it. No accounts to build.
-- **Database** — the app has its own private Postgres database, ready
-  to store things.
-- **Styling** — Tailwind CSS, precompiled by `npm run build` during
-  image creation with either Kubernetes/Paketo or standalone Docker, in a
-  light and a dark look that follow the viewer's Homeroom theme.
+- **Everyone** (default) — five tier bands. Each hike is placed by the
+  group: the tier with the most votes wins, ties go higher. Rows show
+  who added the hike, its note, per-tier vote bars, and your own pick.
+  Hikes nobody has sorted yet sit under "Nobody has sorted these yet".
+- **Your tiers** — the same five bands plus a "To sort" box. Drag a hike
+  into a tier (press and hold on a phone) or tap it to pick a tier in a
+  sheet. You can change or clear your tier any time; one tier per person
+  per hike.
+- **Add a hike** — a name (up to 80 characters, duplicates rejected) and
+  an optional note (up to 200 characters). You can give it your tier
+  right in the same sheet.
+- Votes save optimistically; the list refreshes every 30 seconds and
+  whenever the tab becomes visible. People who are not signed in can
+  look, but sorting and adding ask them to sign up first.
 
-## Replacing the template
+## Design
 
-To change this app, ask Homeroom bot: open the app on Homeroom, tap the
-Homeroom icon in the header, then **Suggest an improvement**, and describe
-the app you want in plain English. The template will be replaced with your
-real app. You can also run
-Claude Code against this repo directly; start with `CLAUDE.md`, which
-carries the app-specific notes and points at the platform rules.
+Forest-green accents; tier colours follow trail-blaze conventions
+(S red, A orange, B yellow/green, C green, D blue) on warm neutrals,
+in both a light and a dark look that follow the viewer's Homeroom theme.
+Tier letters and the title use a rounded font.
 
-Once the real app exists, rewrite this README to describe it.
+## Staging demo
+
+On staging, `?demo=1` seeds 14 made-up hikes and 6 fake hikers with a
+fixed spread of votes so the populated screens can be seen, and gives
+the viewer their own picks for 10 of the hikes (once per viewer). Demo
+rows are separate from real data and labelled "Staging demo".
