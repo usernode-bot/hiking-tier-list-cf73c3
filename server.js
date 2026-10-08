@@ -257,31 +257,48 @@ async function loadHike(req, me, id) {
 app.get('/api/state', async (req, res) => {
   try {
     const me = req.user ? { id: req.user.id, username: req.user.username } : null;
-    const state = await loadState(req, me);
+    let state = await loadState(req, me);
     // First visit to the demo: give the viewer their own votes so the
     // preview shows a personal sort. A row in demo_viewers records that the
     // seeding ran once, so the viewer's own edits are never overwritten.
+    // One transaction, so a concurrent load sees the ten votes all at once
+    // or not at all — never a half-written sort.
     if (state.demo && req.user) {
-      const seeded = await pool.query(
-        `INSERT INTO demo_viewers (user_id, seeded_at) VALUES ($1, $2)
-         ON CONFLICT (user_id) DO NOTHING RETURNING user_id`,
-        [req.user.id, req.now]
-      );
-      if (seeded.rowCount) {
-        const picks = [
-          [900001, 'S'], [900002, 'S'], [900003, 'A'], [900004, 'A'],
-          [900006, 'B'], [900007, 'C'], [900009, 'C'], [900010, 'B'],
-          [900012, 'D'], [900013, 'D'],
-        ];
-        for (const [hikeId, tier] of picks) {
-          await pool.query(
-            `INSERT INTO tier_votes (hike_id, user_id, username, tier, updated_at)
-             VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
-            [hikeId, req.user.id, req.user.username, tier, req.now]
-          );
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        const seeded = await client.query(
+          `INSERT INTO demo_viewers (user_id, seeded_at) VALUES ($1, $2)
+           ON CONFLICT (user_id) DO NOTHING RETURNING user_id`,
+          [req.user.id, req.now]
+        );
+        if (seeded.rowCount) {
+          const picks = [
+            [900001, 'S'], [900002, 'S'], [900003, 'A'], [900004, 'A'],
+            [900006, 'B'], [900007, 'C'], [900009, 'C'], [900010, 'B'],
+            [900012, 'D'], [900013, 'D'],
+          ];
+          for (const [hikeId, tier] of picks) {
+            await client.query(
+              `INSERT INTO tier_votes (hike_id, user_id, username, tier, updated_at)
+               VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING`,
+              [hikeId, req.user.id, req.user.username, tier, req.now]
+            );
+          }
         }
-        Object.assign(state, await loadState(req, me));
+        await client.query('COMMIT');
+      } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+      } finally {
+        client.release();
       }
+      // Re-read after the seeding attempt whatever it did. A concurrent
+      // first load may have done the seeding while this request was
+      // computing its own state snapshot; the loser of the demo_viewers
+      // insert would otherwise answer with the pre-seed sort and show every
+      // hike as To sort.
+      state = await loadState(req, me);
     }
     res.json(state);
   } catch (err) {

@@ -134,7 +134,7 @@
     parts.push(
       '<header class="flex items-center justify-between gap-2 py-3">' +
         '<span class="flex items-center gap-2 text-accent">' + MOUNTAIN +
-          '<h1 class="font-round text-heading font-bold text-fg">Hiking Tier List</h1></span>' +
+          '<h1 class="font-round text-title font-bold text-fg">Hiking Tier List</h1></span>' +
         '<button id="add-hike" class="btn-primary">' + PLUS + 'Add a hike</button>' +
       '</header>' +
       '<div class="seg" role="tablist" aria-label="Which tier list to show">' +
@@ -156,6 +156,10 @@
   function renderStates() {
     if (loadFailed) {
       main.innerHTML =
+        '<header class="flex items-center justify-between gap-2 py-3">' +
+          '<span class="flex items-center gap-2 text-accent">' + MOUNTAIN +
+            '<h1 class="font-round text-title font-bold text-fg">Hiking Tier List</h1></span>' +
+        '</header>' +
         '<div class="state-error">' +
           '<p class="text-body font-medium text-fg">Couldn\'t load the tier list.</p>' +
           '<p class="text-small text-muted">Your tiers are saved. Check your connection and try again.</p>' +
@@ -175,7 +179,7 @@
     main.innerHTML =
       '<header class="flex items-center justify-between gap-2 py-3">' +
         '<span class="flex items-center gap-2 text-accent">' + MOUNTAIN +
-          '<h1 class="font-round text-heading font-bold text-fg">Hiking Tier List</h1></span>' +
+          '<h1 class="font-round text-title font-bold text-fg">Hiking Tier List</h1></span>' +
       '</header>' + bands;
   }
 
@@ -183,7 +187,7 @@
     main.innerHTML =
       '<header class="flex items-center justify-between gap-2 py-3">' +
         '<span class="flex items-center gap-2 text-accent">' + MOUNTAIN +
-          '<h1 class="font-round text-heading font-bold text-fg">Hiking Tier List</h1></span>' +
+          '<h1 class="font-round text-title font-bold text-fg">Hiking Tier List</h1></span>' +
       '</header>' +
       '<div class="state-empty">' +
         '<p class="text-heading text-fg">No hikes yet</p>' +
@@ -237,8 +241,8 @@
         barsHtml(hike) +
         '<span class="text-small text-muted">' + (hike.total ? hike.total + ' vote' + (hike.total === 1 ? '' : 's') : 'No votes') + '</span>' +
       '</span>' +
-      '<span class="flex w-10 flex-col items-center gap-0.5 text-center text-small leading-tight text-muted">' +
-        '<span>' + (hike.mine ? 'You' : 'To sort') + '</span>' + (hike.mine ? you : '') +
+      '<span class="flex w-[52px] flex-none flex-col items-center gap-0.5 text-center text-small leading-tight text-muted">' +
+        '<span class="whitespace-nowrap">' + (hike.mine ? 'You' : 'To sort') + '</span>' + (hike.mine ? you : '') +
       '</span>' +
     '</button></li>';
   }
