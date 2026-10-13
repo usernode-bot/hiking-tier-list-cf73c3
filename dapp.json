@@ -1,6 +1,7 @@
 {
   "description": "A hiking tier list",
   "icon": {
+    "image": "brand/icon.png",
     "emoji": "🥾"
   },
   "secrets": [],
