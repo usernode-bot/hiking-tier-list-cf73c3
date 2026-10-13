@@ -29,30 +29,47 @@
  */
 @layer base {
   :root {
-    --ground: 250 250 249;    /* the page */
-    --surface: 255 255 255;   /* lists, cards, fields */
-    --raised: 245 245 244;    /* hovers, badges */
-    --fg: 28 25 23;           /* text */
-    --muted: 87 83 78;        /* secondary text */
-    --line: 231 229 228;      /* borders, dividers, skeletons */
-    --accent: 15 118 110;     /* the one accent */
+    --ground: 243 245 241;    /* the page, a pale lichen grey */
+    --surface: 255 255 255;   /* bands, lists, sheets, fields */
+    --raised: 234 238 232;    /* switch track, tiles, bar tracks */
+    --fg: 26 33 28;           /* text */
+    --muted: 84 94 86;        /* notes, counts, labels */
+    --line: 216 222 213;      /* borders, dividers, empty bar stubs */
+    --accent: 31 94 60;       /* forest green: the primary action */
     --on-accent: 255 255 255; /* text on the accent */
     --danger: 185 28 28;
     --on-danger: 255 255 255;
-    --focus: 13 148 136;      /* the keyboard focus ring */
+    --focus: 31 94 60;        /* the keyboard focus ring, the accent */
+    --tier-s: 232 93 74;      /* S, a trail-blaze red */
+    --tier-a: 240 150 60;     /* A, amber */
+    --tier-b: 236 196 64;     /* B, goldenrod */
+    --tier-c: 140 184 100;    /* C, moss green */
+    --tier-d: 110 165 214;    /* D, lake blue */
+    --on-tier: 28 25 23;      /* the letter on a tier colour */
+    /* The native UI kit follows the app's accent. */
+    --un-accent: rgb(var(--accent));
+    --un-accent-contrast: rgb(var(--on-accent));
   }
   .dark {
-    --ground: 12 10 9;
-    --surface: 28 25 23;
-    --raised: 41 37 36;
-    --fg: 245 245 244;
-    --muted: 168 162 158;
-    --line: 68 64 60;
-    --accent: 45 212 191;
-    --on-accent: 4 47 46;
+    --ground: 20 23 21;
+    --surface: 30 34 31;
+    --raised: 41 46 42;
+    --fg: 236 239 234;
+    --muted: 160 168 160;
+    --line: 58 64 59;
+    --accent: 120 196 150;
+    --on-accent: 12 38 24;
     --danger: 248 113 113;
     --on-danger: 69 10 10;
-    --focus: 94 234 212;
+    --focus: 120 196 150;
+    --tier-s: 228 104 86;
+    --tier-a: 240 150 60;
+    --tier-b: 236 196 64;
+    --tier-c: 140 184 100;
+    --tier-d: 110 165 214;
+    --on-tier: 28 25 23;
+    --un-accent: rgb(var(--accent));
+    --un-accent-contrast: rgb(var(--on-accent));
   }
   /* el.hidden = true hides an element even when a class gives it a display
      (flex, the components below). */
@@ -124,5 +141,75 @@
   .state-empty,
   .state-error {
     @apply flex flex-col items-center gap-2 px-4 py-8 text-center;
+  }
+
+  /* ── This app's parts ─────────────────────────────────────────────────
+     Tier bands with their trail-blaze letter, the vote chart and the
+     segmented view switch. The tier colours are the app's subject colours:
+     the red-to-blue scale every tier list reads. */
+
+  /* A tier band: the tinted label rail (with the blaze) plus the content.
+     The tier's colour comes from a modifier class set in markup
+     (tier-s / tier-a / tier-b / tier-c / tier-d), written as whole
+     literals so the Tailwind build sees them. */
+  .tier-band {
+    @apply mb-2.5 flex overflow-hidden rounded-xl border border-line bg-surface;
+  }
+  .tier-band > .band-label {
+    @apply flex w-11 flex-none justify-center items-start pt-2.5;
+  }
+  .blaze {
+    @apply flex h-10 w-7 items-center justify-center rounded font-round text-title leading-none text-on-tier;
+  }
+  /* The small blaze that marks your pick, a tier button and a bar's key. */
+  .blaze-mini {
+    @apply flex h-6 w-5 items-center justify-center rounded-sm font-round text-small font-extrabold leading-none text-on-tier;
+  }
+  .tier-s > .band-label { background: rgb(var(--tier-s) / 0.18); }
+  .tier-a > .band-label { background: rgb(var(--tier-a) / 0.18); }
+  .tier-b > .band-label { background: rgb(var(--tier-b) / 0.18); }
+  .tier-c > .band-label { background: rgb(var(--tier-c) / 0.18); }
+  .tier-d > .band-label { background: rgb(var(--tier-d) / 0.18); }
+  .tier-s > .band-label > .blaze, .blaze-tier-s { background: rgb(var(--tier-s)); }
+  .tier-a > .band-label > .blaze, .blaze-tier-a { background: rgb(var(--tier-a)); }
+  .tier-b > .band-label > .blaze, .blaze-tier-b { background: rgb(var(--tier-b)); }
+  .tier-c > .band-label > .blaze, .blaze-tier-c { background: rgb(var(--tier-c)); }
+  .tier-d > .band-label > .blaze, .blaze-tier-d { background: rgb(var(--tier-d)); }
+
+  /* A hike tile in Your tiers. */
+  .hike-chip {
+    @apply flex min-h-11 max-w-full items-center rounded-lg border border-line bg-raised px-3 py-2 text-left text-small font-medium text-fg;
+  }
+
+  /* The two-part view switch. */
+  .seg {
+    @apply m-1 flex rounded-xl bg-raised p-0.5;
+  }
+  .seg > button {
+    @apply flex min-h-11 flex-1 items-center justify-center gap-1 rounded-lg px-3 text-body font-medium text-muted;
+  }
+  .seg > button[aria-selected='true'] {
+    @apply bg-surface text-fg ring-1 ring-line;
+  }
+
+  /* The five-bar vote chart in an Everyone row. Bar heights are set inline
+     relative to the hike's biggest bar; a zero is a thin grey stub. */
+  .vote-bars {
+    @apply flex items-end gap-0.5;
+  }
+  .vote-bars > i {
+    @apply block w-1.5 rounded-sm;
+  }
+  .bar-s { background: rgb(var(--tier-s)); }
+  .bar-a { background: rgb(var(--tier-a)); }
+  .bar-b { background: rgb(var(--tier-b)); }
+  .bar-c { background: rgb(var(--tier-c)); }
+  .bar-d { background: rgb(var(--tier-d)); }
+  .bar-zero { background: rgb(var(--line)); }
+
+  /* A drag target band and the dashed To sort box. */
+  .drop-hover {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: -2px;
   }
 }
